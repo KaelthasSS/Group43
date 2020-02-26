@@ -10,7 +10,7 @@ namespace Sean_OOP_ASS1
         {
             //Object instantiation during creation of List
             List<Country> CountryList = new List<Country>();
-            CountryList.Add(new Country("austria", 1.98f, 'x', true));
+            CountryList.Add(new Country("Austria", 1.98f, 'x', true));
             CountryList.Add(new Country("Belgium", 2.56f, 'x', true));
             CountryList.Add(new Country("Bulgaria", 1.56f, 'x', true));
             CountryList.Add(new Country("Croatia", 0.91f, 'x', true));
@@ -38,14 +38,14 @@ namespace Sean_OOP_ASS1
             CountryList.Add(new Country("Spain", 10.49f, 'x', true));
             CountryList.Add(new Country("Sweden", 2.29f, 'x', true));
 
-              void ParticipatingCountries(string Name)
+            void ParticipatingCountries(string Name)
             {
                 int Index = -1;
                 foreach (var Country in CountryList)
                 {
                     Index++;
                     string Nation = (Name);
-                    if((Nation == (Country.Name)))
+                    if ((Nation == (Country.Name)))
                     {
                         CountryList[Index].Participation = false;
                         Console.WriteLine("done");
@@ -56,19 +56,19 @@ namespace Sean_OOP_ASS1
 
             //Repeat program until user chooses not to
             bool Repeat = true;
-            while(Repeat == true)
+            while (Repeat == true)
             {
 
-                //PROGRAM DISPLAY START
+                //PROGRAM DISPLAY START//
                 char countryRule = 'x';
                 char votingRule = 'x';
-                Console.WriteLine("Hello, this is the European Union Council Voting calculator.\nDo you wish to use:\n\nAll European Countries: 'A'\n           or\nOnly Eurozone Countries: 'U'\n\nA/U: ");
+                Console.WriteLine("Hello, this is the European Union Council Voting Calculator.\nDo you wish to use:\n\nAll European Countries: 'A'\n           or\nOnly Eurozone Countries: 'U'\n\nA/U: ");
                 countryRule = Convert.ToChar(Console.ReadLine());
-                Console.WriteLine("\nWhat voting rule should be used?\n\nQualified Majority: 'Q'\nReinforced Qualified Majority: 'R'\nSimple Majority: 'S'\nUnanimy: 'U'");
+                Console.WriteLine("\nWhat voting rule should be used?\n\nQualified Majority: 'Q'\nReinforced Qualified Majority: 'R'\nSimple Majority: 'S'\nUnanimity: 'U'");
                 votingRule = Convert.ToChar(Console.ReadLine());
                 votingRule = char.ToUpper(votingRule);
 
-                //Set Participating Countries
+                //Set Participating Countries and Count for Maths
                 foreach (var Country in CountryList)
                 {
                     if (countryRule == 'U')
@@ -83,6 +83,7 @@ namespace Sean_OOP_ASS1
                         CountryList[26].Participation = false;
                     }
                 }
+
                 //Iterates through CountryList and Allows the user to choose the participating countries
                 while (true)
                 {
@@ -92,27 +93,24 @@ namespace Sean_OOP_ASS1
                     {
                         break;
                     }
-                    else 
+                    else
                     {
                         Console.WriteLine("Enter Name of Non Participating Country");
                         ParticipatingCountries(Console.ReadLine());
-                    
-                    
+
+
                     }
                 }
+
                 //Iterate through CountryList and set vote variable based on user input
                 foreach (var Country in CountryList)
                 {
-                    if (Country.Participation == true) 
+                    if (Country.Participation == true)
                     {
-                    
                         Console.WriteLine($"\nWhat is {Country.Name}'s vote?\n\nYes: 'Y'\nNo: 'N'\nAbstain: 'A'\n");
                         Country.Vote = Convert.ToChar(Console.ReadLine());
                         Country.Vote = char.ToUpper(Country.Vote);
-                    
-                    
                     }
-                   
                 }
 
                 //Count included Countries
@@ -163,22 +161,101 @@ namespace Sean_OOP_ASS1
                 }
 
                 //Calculate voting population for 'Yes'
-                float voteSum = 0.0f; //Variable for suming votes
+                float VoteSum = 0.0f; //Variable for suming votes for POPULATIONS
                 foreach (var Country in CountryList)
                 {
                     if (Country.Vote == 'Y' && Country.Participation == true)
                     {
                         Console.WriteLine(Country.Population);
-                        voteSum = Country.Population + voteSum;
+                        VoteSum = Country.Population + VoteSum;
                     }
                 }
-                voteSum = (float)Math.Ceiling(voteSum);
-                Console.WriteLine(voteSum);
+
+                //Clean up decimal addition result
+                if (VoteSum < 100)
+                {
+                    VoteSum = (float)Math.Ceiling(VoteSum);
+                    Console.WriteLine(VoteSum);
+                }
+                else
+                {
+                    VoteSum = (float)Math.Floor(VoteSum);
+                    Console.WriteLine(VoteSum);
+                }
+
+                //Member State 'Yes' vote sum
+                int MemberSum = 0;
+                foreach (var Country in CountryList)
+                {
+                    if (Country.Participation == true && Country.Vote == 'Y')
+                    {
+                        MemberSum++;
+                    }
+                }
+                Console.WriteLine($"\nCcount: {Ccount}\nMemberSum: {MemberSum}");
 
                 //Qualified Majority
-                if (votingRule == 'Q' && voteSum >= 55)
+                if (votingRule == 'Q')
                 {
-                    Console.WriteLine("APPROVED");
+                    float ActualMember = Convert.ToInt32(((float)100/Ccount) * (float)MemberSum);
+                    Console.WriteLine($"\nActualMember: {ActualMember}");
+                    Console.WriteLine($"\nQUALIFIED MAJORITY:");
+                    if (ActualMember >= 55 && VoteSum >= 65)
+                    {
+                        Console.WriteLine($"APPROVED\n\n Member States 'Yes': ({MemberSum}/{Ccount}) {ActualMember}%, required: 55%\n Population 'Yes' Percentage: {VoteSum}%, required: 65%");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"DECLINED\n\n Member States 'Yes' Percentage: ({MemberSum}/{Ccount}) {ActualMember}%, required: 55%\n Population 'Yes' Percentage: {VoteSum}%, required: 65%");
+                    }
+                }
+
+                //Reinforced Qualified Majority
+                if (votingRule == 'R')
+                {
+                    float ActualMember = Convert.ToInt32(((float)100 / Ccount) * (float)MemberSum);
+                    Console.WriteLine($"\nActualMember: {ActualMember}");
+                    Console.WriteLine($"\nREINFORCED QUALIFIED MAJORITY:");
+                    if (ActualMember >= 72 && VoteSum >= 65)
+                    {
+                        Console.WriteLine($"APPROVED\n\n Member States 'Yes': ({MemberSum}/{Ccount}) {ActualMember}%, required: 72%\n Population 'Yes' Percentage: {VoteSum}%, required: 65%");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"DECLINED\n\n Member States 'Yes' Percentage: ({MemberSum}/{Ccount}) {ActualMember}%, required: 72%\n Population 'Yes' Percentage: {VoteSum}%, required: 65%");
+                    }
+                }
+
+                //Simple Majority
+                if (votingRule == 'S')
+                {
+                    float ActualMember = Convert.ToInt32(((float)100 / Ccount) * (float)MemberSum);
+                    Console.WriteLine($"\nActualMember: {ActualMember}");
+                    Console.WriteLine($"\nSIMPLE MAJORITY:");
+                    if (ActualMember >= 50 && VoteSum >= 0)
+                    {
+                        Console.WriteLine($"APPROVED\n\n Member States 'Yes': ({MemberSum}/{Ccount}) {ActualMember}%, required: 50%\n Population 'Yes' Percentage: {VoteSum}%, required: 0%");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"DECLINED\n\n Member States 'Yes' Percentage: ({MemberSum}/{Ccount}) {ActualMember}%, required: 50%\n Population 'Yes' Percentage: {VoteSum}%, required: 0%");
+                    }
+                }
+
+                //Unanimity
+                if (votingRule == 'U')
+                {
+                    float ActualMember = Convert.ToInt32(((float)100 / Ccount) * (float)MemberSum);
+                    Console.WriteLine($"\nActualMember: {ActualMember}");
+                    Console.WriteLine($"\nUNANIMITY:");
+                    if (ActualMember >= 100 && VoteSum >= 0)
+                    {
+                        Console.WriteLine($"APPROVED\n\n Member States 'Yes': ({MemberSum}/{Ccount}) {ActualMember}%, required: 100%\n Population 'Yes' Percentage: {VoteSum}%, required: 0%");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"DECLINED\n\n Member States 'Yes' Percentage: ({MemberSum}/{Ccount}) {ActualMember}%, required: 100%\n Population 'Yes' Percentage: {VoteSum}%, required: 0%");
+                    }
                 }
 
                 //Console.WriteLine(Sum);
@@ -192,24 +269,22 @@ namespace Sean_OOP_ASS1
                 //country iteration required for easy voting rule/countries participating
 
                 Repeat = false;
-
-                Console.WriteLine("\n\nDo you want to repeat the program? (Y/N)");
-                if(Console.ReadLine() == "Y")
+                char Response = 'x';
+                while(Repeat == false)
                 {
-                    Repeat = true;
+                    Console.WriteLine("\n\nDo you want to repeat the program? (Y/N)");
+                    Response = Convert.ToChar(Console.ReadLine());
+                    Char.ToUpper(Response);
+                    if (Response == 'Y')
+                    {
+                        Repeat = true;
+                    }
+                    else if (Response == 'N')
+                    {
+                        break;
+                    }
                 }
-                else if(Console.ReadLine() == "N")
-                {
-                    break;
-                }
-
-
-          
-                     
-         
-            
             }
         }
-       
     }
 }
